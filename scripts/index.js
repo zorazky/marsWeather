@@ -29,6 +29,29 @@ getWeather().then(sols => {
     selectedSolIndex = sols.length - 1;
     displaySelectedSol(sols);
     displayPreviousSols(sols);
+    updateUnits();
+
+    unitToggle.addEventListener('click', () => {
+        let metricUnits = !isMetric();
+
+        metricRadio.checked = metricUnits;
+        imperialRadio.checked = !metricUnits;
+        displaySelectedSol(sols);
+        displayPreviousSols(sols);
+        updateUnits();
+    })
+
+    metricRadio.addEventListener('change', () => {
+        displaySelectedSol(sols);
+        displayPreviousSols(sols);
+        updateUnits();
+    })
+
+    imperialRadio.addEventListener('change', () => {
+        displaySelectedSol(sols);
+        displayPreviousSols(sols);
+        updateUnits();
+    })
 });
 
 function displaySelectedSol(sols) {
@@ -61,11 +84,19 @@ function displayPreviousSols(sols) {
 
 
 function displayTemperature(temperature) {
-    return Math.round(temperature);
+    let returnTemp = temperature;
+    if (!isMetric()) {
+        returnTemp = (temperature - 32) * (5/9)
+    }
+    return Math.round(returnTemp);
 }
 
 function displaySpeed(speed) {
-    return Math.round(speed);
+    let returnSpeed = speed;
+    if (!isMetric()) {
+        returnSpeed = speed / 1.609;
+    }
+    return Math.round(returnSpeed);
 }
 
 function displayDate(date) {
@@ -96,4 +127,20 @@ function getWeather() {
                 }
             })
         })
+}
+
+function updateUnits() {
+    const speedUnits = document.querySelectorAll('[data-speed-unit]');
+    const tempUnits = document.querySelectorAll('[data-temp-unit]');
+    speedUnits.forEach(unit => {
+        unit.innerText = isMetric() ? 'kph' : "mph"
+    })
+
+    tempUnits.forEach(unit => {
+        unit.innerText = isMetric() ? 'C' : 'F'
+    })
+}
+
+function isMetric() {
+    return  metricRadio.checked;
 }
